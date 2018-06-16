@@ -132,6 +132,7 @@ createMonster(1860, 470, 0);
 
 createPlatform(2050, 470, 2);
 goal = createSprite(2115, 360);
+goal.addImage(goalImage);
 
 }
 
@@ -144,7 +145,7 @@ function createPlayer() {
   player.addAnimation("fall", playerFallAnimation).looping = false;
   player.scale = 0.25;
   player.setCollider("rectangle", 0, 0, 250, 490);
-  player.debug = true;
+  //player.debug = true;
 }
 
 // Creates a platform of specified length (len) at x, y.
@@ -156,14 +157,14 @@ function createPlatform(x, y, len) {
   last.addToGroup(platforms);
   first.addImage(platformImageFirst);
   last.addImage(platformImageLast);
-  first.debug = true;
-  last.debug = true;
+  //first.debug = true;
+  //last.debug = true;
   if(len > 2) {
     for(var i = 1; i < len - 1; i++) {
       var middle = createSprite(x + (128 * i), y, 0, 0);
       middle.addToGroup(platforms);
       middle.addImage(platformImageMiddle);
-      middle.debug = true;
+    //  middle.debug = true;
 
     }
   }
