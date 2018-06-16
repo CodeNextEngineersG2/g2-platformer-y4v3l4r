@@ -71,7 +71,7 @@ function preload() {
 }
 
 function setup() {
-  gameScreen = createCanvas(1280, 720);
+  gameScreen = createCanvas(1600, 720);
   gameScreen.parent("#game-screen");
   backgroundImage.resize(width, height);
   playerStartX = 50;
@@ -109,10 +109,30 @@ function buildLevel() {
 
   // create platforms, monsters, and any other game objects
   // best method is to draw sprites from left to right on the screen
-  createPlatform(50, 690, 5);
+  createPlatform(90, 690, 5);
   createCollectable(300, 340);
   createMonster(500, 600, -1);
   createMonster(500, 600, 0);
+
+  createPlatform(50, 690, 1);
+createCollectable(300, 340);
+createMonster(500, 600, -2);
+createCollectable(700, 440);
+
+createPlatform(850, 645, 3);
+createMonster(1085, 530, 0);
+createCollectable(1085, 320);
+createCollectable(1300, 420);
+
+createPlatform(1450, 595, 4);
+createCollectable(1600, 320);
+createMonster(1730, 470, 0);
+createCollectable(1730, 240);
+createMonster(1860, 470, 0);
+
+createPlatform(2050, 470, 2);
+goal = createSprite(2115, 360);
+
 }
 
 // Creates a player sprite and adds animations and a collider to it
@@ -124,7 +144,7 @@ function createPlayer() {
   player.addAnimation("fall", playerFallAnimation).looping = false;
   player.scale = 0.25;
   player.setCollider("rectangle", 0, 0, 250, 490);
-  //player.debug = true;
+  player.debug = true;
 }
 
 // Creates a platform of specified length (len) at x, y.
@@ -136,14 +156,15 @@ function createPlatform(x, y, len) {
   last.addToGroup(platforms);
   first.addImage(platformImageFirst);
   last.addImage(platformImageLast);
-  //first.debug = true;
-  //last.debug = true;
+  first.debug = true;
+  last.debug = true;
   if(len > 2) {
     for(var i = 1; i < len - 1; i++) {
       var middle = createSprite(x + (128 * i), y, 0, 0);
       middle.addToGroup(platforms);
       middle.addImage(platformImageMiddle);
-      //middle.debug = true;
+      middle.debug = true;
+
     }
   }
 }
@@ -203,6 +224,8 @@ function checkCollisions() {
     player.collide(platforms, platformCollision);
     monsters.collide(platforms, platformCollision);
     player.collide(monsters, playerMonsterCollision);
+    player.overlap(collectables, getCollectable);
+
 
 }
 
@@ -228,7 +251,7 @@ function playerMonsterCollision(player, monster) {
   monster.remove();
   }
   else{
-    exectuteLoss();
+    executeLoss();
   }
   var defeatedMonster = createSprite(monster.position.x, monster.position.y, 0, 0);
 defeatedMonster.addImage(monsterDefeatImage);
@@ -244,13 +267,13 @@ score++;
 
 // Callback function that runs when the player overlaps with a collectable.
 function getCollectable(player, collectable) {
-
-}
+collectable.remove();
+player.score++; }
 
 // Updates the player's position and current animation by calling
 // all of the relevant "check" functions below.
 function updatePlayer() {
-  //console.log("Player x: " + player.position.x + " Player y: " + player.position.y);
+  console.log("Player x: " + player.position.x + " Player y: " + player.position.y);
   checkIdle();
   checkFalling();
   checkJumping();
@@ -343,12 +366,11 @@ function keyTyped() {
 // Note that the camera should be turned off before setting the static images and the
 // score display, and turned on afterwards. This allows p5.play to get set their
 // positions relative to the camera once the camera has turned back on.
-function updateDisplay() {
-  // clear the screen
+function updateDisplay(){
   background(0, 0, 0);
 
   // briefly turn camera off before setting any static images or text
-  camera.off()
+    camera.off()
 
   // set the background image
   image(backgroundImage, 0, 0);
@@ -360,7 +382,11 @@ function updateDisplay() {
 
   // turn camera back on
   camera.on();
+  camera.position.x = player.position.x;
 
+  for(var i = 0; i < collectables.length; i++) {
+    collectables[i].rotation += 5;
+}
 }
 
 // Called when the player has won the game (e.g., reached the goal at the end).
